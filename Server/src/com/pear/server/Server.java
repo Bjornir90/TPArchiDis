@@ -19,7 +19,10 @@ public class Server {
 	}
 
 	public static Cart createCart() throws Exception {
-		String uuid = UUID.randomUUID().toString();
+		String uuid;
+		do {
+			uuid = UUID.randomUUID().toString();
+		} while(carts.containsKey(uuid));
 		carts.put(uuid, new CartImpl(uuid));
 		return (Cart) UnicastRemoteObject.exportObject(carts.get(uuid), 0);
 	}
@@ -35,6 +38,7 @@ public class Server {
 		Catalog catalogStub = (Catalog) UnicastRemoteObject.exportObject(((Catalog) catalog), 0);
 		Registry reg = LocateRegistry.createRegistry(1099);
 		reg.rebind("catalog", catalogStub);
+
 		CartDispenser dispenser = new CartDispenserImpl();
 		CartDispenser dispenserStub = (CartDispenser) UnicastRemoteObject.exportObject(dispenser, 0);
 		reg.rebind("dispenser", dispenserStub);
