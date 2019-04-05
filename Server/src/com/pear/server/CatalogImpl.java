@@ -22,7 +22,7 @@ public class CatalogImpl implements Catalog {
 
 	@Override
 	public int getNumberArticles() throws RemoteException {
-		return 10;
+		return articles.size();
 	}
 
 	@Override
