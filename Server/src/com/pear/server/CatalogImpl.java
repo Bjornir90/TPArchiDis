@@ -6,6 +6,7 @@ import com.pear.common.NonExistentArticleException;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Set;
 
 public class CatalogImpl implements Catalog {
 
@@ -31,5 +32,10 @@ public class CatalogImpl implements Catalog {
 		} else {
 			throw new NonExistentArticleException("Wallah il existe pas ton article khey");
 		}
+	}
+
+	@Override
+	public Set<String> getKeys() throws RemoteException {
+		return articles.keySet();
 	}
 }
