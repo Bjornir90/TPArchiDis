@@ -9,13 +9,13 @@ public class Article implements Serializable {
 	private LocalDateTime availabilityDate;
 
 	public Article(String key, String desc, float price) {
-		this.key = key;
-		this.desc = desc;
-		this.price = price;
+		this(key, desc, price, LocalDateTime.now());
 	}
 
 	public Article(String key, String desc, float price, LocalDateTime date){
-		this(key, desc, price);
+		this.key = key;
+		this.desc = desc;
+		this.price = price;
 		availabilityDate = date;
 	}
 
