@@ -15,6 +15,5 @@ public class Server {
 		Registry reg = LocateRegistry.createRegistry(1099);
 		Catalog catalogStub = (Catalog) UnicastRemoteObject.exportObject(((Catalog) catalog), 0);
 		reg.rebind("catalog", catalogStub);
-
 	}
 }
