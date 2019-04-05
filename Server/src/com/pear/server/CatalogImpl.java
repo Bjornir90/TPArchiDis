@@ -5,6 +5,7 @@ import com.pear.common.Catalog;
 import com.pear.common.NonExistentArticleException;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class CatalogImpl implements Catalog {
 	}
 
 	@Override
-	public Set<String> getKeys() throws RemoteException {
-		return articles.keySet();
+	public ArrayList<String> getKeys() throws RemoteException {
+		return new ArrayList<>(articles.keySet());
 	}
 }

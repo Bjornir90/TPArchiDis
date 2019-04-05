@@ -20,7 +20,7 @@ public class Client {
 
         System.out.println("Le nombre d'articles dans le catalogue est : " + catalog.getNumberArticles());
 
-        ArrayList<String> keys = new ArrayList<>(catalog.getKeys());
+        ArrayList<String> keys = catalog.getKeys();
         int article_pos = (int) catalog.getNumberArticles()/2;
         String article_key = keys.get(article_pos);
 
