@@ -23,20 +23,17 @@ public class CartImpl implements Cart {
 	public void addArticle(Article toAdd, int quantity) throws RemoteException {
 		articles.add(toAdd);
 		quantities.put(toAdd.getKey(), quantity);
-		System.out.println("toAdd = [" + toAdd + "], quantity = [" + quantity + "]");
 	}
 
 	@Override
 	public void changeQuantity(String key, int quantity) throws RemoteException {
 		quantities.replace(key, quantity);
-		System.out.println("CartImpl.changeQuantity");
 	}
 
 	@Override
 	public void removeArticle(String key) throws RemoteException {
 		articles.remove(key);
 		quantities.remove(key);
-		System.out.println("CartImpl.removeArticle");
 	}
 
 	@Override
@@ -50,7 +47,6 @@ public class CartImpl implements Cart {
 
 	@Override
 	public void destroy() throws RemoteException {
-		System.out.println("CartImpl.destroy");
 		Server.removeCart(this.uuid);
 	}
 

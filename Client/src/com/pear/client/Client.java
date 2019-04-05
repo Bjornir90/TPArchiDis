@@ -30,7 +30,7 @@ public class Client {
 
         Article article = catalog.getArticle(article_key);
 
-        System.out.println("Description de l'article" + article.getDesc());
+        System.out.println("Description de l'article : " + article.getDesc());
         CartDispenser dispenser = (CartDispenser) registry.lookup("dispenser");
         Cart cart = dispenser.dispenseCart();
         System.out.println("Cart UUID : " + cart.getUuid());
