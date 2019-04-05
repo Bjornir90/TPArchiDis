@@ -2,6 +2,7 @@ package com.pear.server;
 
 import com.pear.common.Article;
 import com.pear.common.Cart;
+import com.pear.common.CartDispenser;
 import com.pear.common.Catalog;
 
 import java.rmi.registry.LocateRegistry;
@@ -17,10 +18,13 @@ public class Server {
 		carts = new HashMap<>();
 	}
 
-	public static String createCart(){
-		String uuid = UUID.randomUUID().toString();
+	public static Cart createCart() throws Exception {
+		String uuid;
+		do {
+			uuid = UUID.randomUUID().toString();
+		} while(carts.containsKey(uuid));
 		carts.put(uuid, new CartImpl(uuid));
-		return uuid;
+		return (Cart) UnicastRemoteObject.exportObject(carts.get(uuid), 0);
 	}
 
 	public static void removeCart(String uuid){
@@ -34,5 +38,9 @@ public class Server {
 		Catalog catalogStub = (Catalog) UnicastRemoteObject.exportObject(((Catalog) catalog), 0);
 		Registry reg = LocateRegistry.createRegistry(1099);
 		reg.rebind("catalog", catalogStub);
+
+		CartDispenser dispenser = new CartDispenserImpl();
+		CartDispenser dispenserStub = (CartDispenser) UnicastRemoteObject.exportObject(dispenser, 0);
+		reg.rebind("dispenser", dispenserStub);
 	}
 }

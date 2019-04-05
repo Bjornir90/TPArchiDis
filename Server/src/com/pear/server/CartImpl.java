@@ -49,4 +49,8 @@ public class CartImpl implements Cart {
 	public void destroy() throws RemoteException {
 		Server.removeCart(this.uuid);
 	}
+
+	public String getUuid() {
+		return uuid;
+	}
 }
