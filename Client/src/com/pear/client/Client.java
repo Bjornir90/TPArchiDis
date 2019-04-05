@@ -2,6 +2,7 @@ package com.pear.client;
 
 import com.pear.common.Article;
 import com.pear.common.Cart;
+import com.pear.common.CartDispenser;
 import com.pear.common.Catalog;
 
 import java.lang.reflect.Array;
