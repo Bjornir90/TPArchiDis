@@ -10,5 +10,5 @@ public interface Cart extends Remote {
 	void removeArticle(String key) throws RemoteException;
 	float getTotalPrice() throws RemoteException;
 	void destroy() throws RemoteException;
-
+	String getUuid() throws RemoteException;
 }

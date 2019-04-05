@@ -54,6 +54,7 @@ public class CartImpl implements Cart {
 		Server.removeCart(this.uuid);
 	}
 
+	@Override
 	public String getUuid() {
 		return uuid;
 	}
