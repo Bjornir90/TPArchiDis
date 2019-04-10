@@ -25,12 +25,10 @@ public class Client {
 
         Article article = catalog.getArticle(article_key);
 
-        SubscriberImpl sub = new SubscriberImpl();
-        Subscriber subStub = (Subscriber) UnicastRemoteObject.exportObject(sub, 0);
-
         System.out.println("Description de l'article : " + article.getDesc());
+
         Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
-        pool.subscribe(subStub);
+        SubscriberImpl sub = new SubscriberImpl(pool);
 
         Cart cart = pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
