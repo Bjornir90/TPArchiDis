@@ -1,7 +1,9 @@
 package com.pear.server;
 
+import com.pear.common.Notification;
 import com.pear.common.Pool;
 import com.pear.common.Poolable;
+import com.pear.common.Subscriber;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,11 +15,13 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	private Supplier<T> supplier;
 	//pool contains all instances, availableObjects only contains instances not yet sent to a client
 	private ArrayList<T> pool, availableObjects;
+	private ArrayList<Subscriber> subscribers;
 
 	private static int MAX_SIZE = 2048;
 
 	public PoolImpl(Supplier<T> supplier) {
 		this.supplier = supplier;
+		subscribers = new ArrayList<>();
 	}
 
 	@Override
@@ -31,6 +35,9 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 				e.printStackTrace();
 			}
 			availableObjects.remove(availableObjects.indexOf(object));
+			if(availableObjects.size() < 20){
+				notifyAllSubscribers(new Notification("Attention : moins de 20 paniers disponibles"));
+			}
 			return stub;
 		} else if(pool.size() < MAX_SIZE){
 			T object = supplier.get();
@@ -73,6 +80,21 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 			clearLists();
 			for (int i = 0; i < capacity; i++) {
 				addToLists(supplier.get());
+			}
+		}
+	}
+
+	@Override
+	public void subscribe(Subscriber subscriber) throws RemoteException {
+		subscribers.add(subscriber);
+	}
+
+	private void notifyAllSubscribers(Notification notification){
+		for(Subscriber sub : subscribers){
+			try {
+				sub.notify(notification);
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 		}
 	}

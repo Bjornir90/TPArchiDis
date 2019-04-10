@@ -17,7 +17,7 @@ public class Server {
 		reg.rebind("catalog", catalogStub);
 
 		Pool<Cart> pool = new PoolImpl<>(CartImpl::new);
-		pool.init(2048);
+		pool.init(20);
 		Pool<Cart> poolStub = (Pool<Cart>) UnicastRemoteObject.exportObject(pool, 0);
 		reg.rebind("pool", poolStub);
 	}

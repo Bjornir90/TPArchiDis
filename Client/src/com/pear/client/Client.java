@@ -4,6 +4,7 @@ import com.pear.common.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class Client {
@@ -24,8 +25,13 @@ public class Client {
 
         Article article = catalog.getArticle(article_key);
 
+        SubscriberImpl sub = new SubscriberImpl();
+        Subscriber subStub = (Subscriber) UnicastRemoteObject.exportObject(sub, 0);
+
         System.out.println("Description de l'article : " + article.getDesc());
         Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
+        pool.subscribe(subStub);
+
         Cart cart = pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
         cart.addArticle(article, 2);
