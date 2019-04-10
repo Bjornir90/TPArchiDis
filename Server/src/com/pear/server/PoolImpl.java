@@ -28,7 +28,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			availableObjects.remove(object);
+			availableObjects.remove(availableObjects.indexOf(object));
 			return stub;
 		} else {
 			T object = supplier.get();
