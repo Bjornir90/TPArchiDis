@@ -2,12 +2,9 @@ package com.pear.client;
 
 import com.pear.common.*;
 
-import java.lang.reflect.Array;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.Set;
 
 public class Client {
 
