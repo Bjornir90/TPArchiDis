@@ -36,6 +36,8 @@ public class Client {
         System.out.println("TotalPrice : "+ cart.getTotalPrice());
         cart.changeQuantity(article_key, 1);
         System.out.println("TotalPrice : " + cart.getTotalPrice());
+        pool.unsubscribe(subStub);
+        UnicastRemoteObject.unexportObject(subStub, false);
         pool.release(cart);
     }
 

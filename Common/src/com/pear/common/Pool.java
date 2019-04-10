@@ -34,6 +34,6 @@ public interface Pool<T extends Poolable> extends Remote {
 	 * @throws RemoteException
 	 */
 	void subscribe(Subscriber subscriber) throws RemoteException;
-
+	void unsubscribe(Subscriber subscriber) throws RemoteException;
 }
 
