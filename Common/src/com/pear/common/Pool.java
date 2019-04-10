@@ -1,12 +1,12 @@
 package com.pear.common;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class Pool<T extends Poolable> implements Remote {
 	private Supplier<T> supplier;
-	private int capacity;
 	private ArrayList<T> pool, availableObjects;
 
 	public Pool(Supplier<T> supplier) {
@@ -23,14 +23,17 @@ public class Pool<T extends Poolable> implements Remote {
 		} else {
 			T object = supplier.get();
 			pool.add(object);
-			capacity++;
 			return object;
 		}
 	}
 
 	public void release(T toRelease) throws RuntimeException{
 		if(pool.contains(toRelease)){
-			toRelease.reset();
+			try {
+				toRelease.reset();
+			} catch (RemoteException e){
+				e.printStackTrace();
+			}
 			availableObjects.add(toRelease);
 		} else {
 			throw new RuntimeException("Released object is not in pool");
@@ -38,7 +41,6 @@ public class Pool<T extends Poolable> implements Remote {
 	}
 
 	public void init(int capacity){
-		this.capacity = capacity;
 		clearLists();
 		for(int i = 0; i < capacity; i++){
 			addToLists(supplier.get());

@@ -1,9 +1,6 @@
 package com.pear.client;
 
-import com.pear.common.Article;
-import com.pear.common.Cart;
-import com.pear.common.CartDispenser;
-import com.pear.common.Catalog;
+import com.pear.common.*;
 
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
@@ -23,7 +20,7 @@ public class Client {
         System.out.println("Le nombre d'articles dans le catalogue est : " + catalog.getNumberArticles());
 
         ArrayList<String> keys = catalog.getKeys();
-        int article_pos = (int) catalog.getNumberArticles()/2;
+        int article_pos = catalog.getNumberArticles()/2;
         String article_key = keys.get(article_pos);
 
         System.out.println("La clé de l'article n° " + article_pos + " est "+ article_key);
@@ -31,14 +28,13 @@ public class Client {
         Article article = catalog.getArticle(article_key);
 
         System.out.println("Description de l'article : " + article.getDesc());
-        CartDispenser dispenser = (CartDispenser) registry.lookup("dispenser");
-        Cart cart = dispenser.dispenseCart();
+        Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
+        Cart cart = pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
         cart.addArticle(article, 2);
         System.out.println("TotalPrice : "+ cart.getTotalPrice());
         cart.changeQuantity(article_key, 1);
         System.out.println("TotalPrice : " + cart.getTotalPrice());
-        cart.destroy();
     }
 
 }

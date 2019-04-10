@@ -1,35 +1,12 @@
 package com.pear.server;
 
-import com.pear.common.Article;
-import com.pear.common.Cart;
-import com.pear.common.CartDispenser;
-import com.pear.common.Catalog;
+import com.pear.common.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class Server {
-	private static HashMap<String, Cart> carts;
-
-	static {
-		carts = new HashMap<>();
-	}
-
-	public static Cart createCart() throws Exception {
-		String uuid;
-		do {
-			uuid = UUID.randomUUID().toString();
-		} while(carts.containsKey(uuid));
-		carts.put(uuid, new CartImpl(uuid));
-		return (Cart) UnicastRemoteObject.exportObject(carts.get(uuid), 0);
-	}
-
-	public static void removeCart(String uuid){
-		carts.remove(uuid);
-	}
 
 	public static void main(String[] args) throws Exception{
 		CatalogImpl catalog = new CatalogImpl();
@@ -39,8 +16,9 @@ public class Server {
 		Registry reg = LocateRegistry.createRegistry(1099);
 		reg.rebind("catalog", catalogStub);
 
-		CartDispenser dispenser = new CartDispenserImpl();
-		CartDispenser dispenserStub = (CartDispenser) UnicastRemoteObject.exportObject(dispenser, 0);
-		reg.rebind("dispenser", dispenserStub);
+		Pool<Cart> pool = new Pool<>(CartImpl::new);
+		pool.init(20);
+		//Pool<Cart> poolStub = (Pool<Cart>) UnicastRemoteObject.exportObject(pool, 0);
+		reg.rebind("pool", UnicastRemoteObject.exportObject(pool, 0));
 	}
 }

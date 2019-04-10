@@ -6,6 +6,7 @@ import com.pear.common.Cart;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class CartImpl implements Cart {
 
@@ -13,8 +14,8 @@ public class CartImpl implements Cart {
 	HashMap<String, Integer> quantities;
 	String uuid;
 
-	public CartImpl(String uuid){
-		this.uuid = uuid;
+	public CartImpl(){
+		this.uuid = UUID.randomUUID().toString();
 		articles = new ArrayList<>();
 		quantities = new HashMap<>();
 	}
@@ -46,12 +47,13 @@ public class CartImpl implements Cart {
 	}
 
 	@Override
-	public void destroy() throws RemoteException {
-		Server.removeCart(this.uuid);
+	public String getUuid() {
+		return uuid;
 	}
 
 	@Override
-	public String getUuid() {
-		return uuid;
+	public void reset() {
+		articles.clear();
+		quantities.clear();
 	}
 }
