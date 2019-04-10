@@ -28,6 +28,6 @@ public interface Pool<T extends Poolable> extends Remote {
 	void init(int capacity) throws RemoteException;
 
 	void subscribe(Subscriber subscriber) throws RemoteException;
-
+	void unsubscribe(Subscriber subscriber) throws RemoteException;
 }
 

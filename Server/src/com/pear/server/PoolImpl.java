@@ -108,6 +108,11 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 		subscribers.add(subscriber);
 	}
 
+	@Override
+	public void unsubscribe(Subscriber subscriber) throws RemoteException {
+		subscribers.remove(subscriber);
+	}
+
 	private void notifyAllSubscribers(Notification notification){
 		for(Subscriber sub : subscribers){
 			try {
