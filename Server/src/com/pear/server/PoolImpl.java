@@ -1,6 +1,5 @@
 package com.pear.server;
 
-import com.pear.common.Cart;
 import com.pear.common.Pool;
 import com.pear.common.Poolable;
 
@@ -12,6 +11,7 @@ import java.util.function.Supplier;
 
 public class PoolImpl<T extends Poolable> implements Pool<T> {
 	private Supplier<T> supplier;
+	//pool contains all instances, availableObjects only contains instances not yet sent to a client
 	private ArrayList<T> pool, availableObjects;
 
 	private static int MAX_SIZE = 2048;
