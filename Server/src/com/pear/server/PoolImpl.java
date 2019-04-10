@@ -49,6 +49,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 				e.printStackTrace();
 			}
 			stubs.put(object, stub);
+			if (pool.size() == MAX_SIZE) notifyAllSubscribers(new Notification("Mince ! Plus aucun panier disponible..."));
 			return (T) stub;
 		} else throw new ArrayIndexOutOfBoundsException();
 	}

@@ -28,7 +28,9 @@ public class Client {
         System.out.println("Description de l'article : " + article.getDesc());
 
         Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
-        SubscriberImpl sub = new SubscriberImpl(pool);
+        SubscriberImpl sub = new SubscriberImpl();
+        Subscriber subStub = (Subscriber) UnicastRemoteObject.exportObject(sub, 0);
+        pool.subscribe(subStub);
 
         Cart cart = pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
@@ -36,9 +38,10 @@ public class Client {
         System.out.println("TotalPrice : "+ cart.getTotalPrice());
         cart.changeQuantity(article_key, 1);
         System.out.println("TotalPrice : " + cart.getTotalPrice());
+
         pool.unsubscribe(subStub);
-        UnicastRemoteObject.unexportObject(subStub, false);
         pool.release(cart);
+
     }
 
 }
