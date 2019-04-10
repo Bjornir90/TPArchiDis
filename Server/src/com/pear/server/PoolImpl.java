@@ -64,7 +64,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 				}
 				availableObjects.add(toRelease);
 				System.out.println("Removed object : "+toRelease.getUuid());
-				notifyAllSubscribers(new Notification("Un panier est disponible !"));
+				if (availableObjects.size() == 1) new Notification("Un panier est disponible !");
 			} else {
 				throw new RuntimeException("Released object is not in pool");
 			}
