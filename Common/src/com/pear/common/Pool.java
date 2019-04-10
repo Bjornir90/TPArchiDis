@@ -5,9 +5,9 @@ import java.rmi.RemoteException;
 
 public interface Pool<T extends Poolable> extends Remote {
 
-	public T getInstance() throws RemoteException;
-	public void release(T toRelease) throws RuntimeException, RemoteException;
-	public void init(int capacity) throws RemoteException;
+	T getInstance() throws RemoteException;
+	void release(T toRelease) throws RuntimeException, RemoteException;
+	void init(int capacity) throws RemoteException;
 
 }
 

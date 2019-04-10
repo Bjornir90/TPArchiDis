@@ -26,7 +26,7 @@ public class Client {
 
         System.out.println("Description de l'article : " + article.getDesc());
         Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
-        Cart cart = pool.getInstance();
+        Cart cart = (Cart) pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
         cart.addArticle(article, 2);
         System.out.println("TotalPrice : "+ cart.getTotalPrice());

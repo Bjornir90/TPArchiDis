@@ -4,6 +4,7 @@ import com.pear.common.Pool;
 import com.pear.common.Poolable;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -21,12 +22,24 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	public T getInstance(){
 		if(availableObjects.size() > 0){
 			T object = availableObjects.get(0);
+			T stub = null;
+			try {
+				stub = (T) UnicastRemoteObject.exportObject(object, 0);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			availableObjects.remove(object);
-			return object;
+			return stub;
 		} else {
 			T object = supplier.get();
+			T stub = null;
+			try {
+				stub = (T) UnicastRemoteObject.exportObject(object, 0);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			pool.add(object);
-			return object;
+			return stub;
 		}
 	}
 

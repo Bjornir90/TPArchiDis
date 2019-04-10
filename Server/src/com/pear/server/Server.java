@@ -16,9 +16,9 @@ public class Server {
 		Registry reg = LocateRegistry.createRegistry(1099);
 		reg.rebind("catalog", catalogStub);
 
-		PoolImpl<Cart> poolImpl = new PoolImpl<>(CartImpl::new);
-		poolImpl.init(20);
-		//PoolImpl<Cart> poolStub = (PoolImpl<Cart>) UnicastRemoteObject.exportObject(poolImpl, 0);
-		reg.rebind("pool", UnicastRemoteObject.exportObject(poolImpl, 0));
+		Pool<Cart> pool = new PoolImpl<>(CartImpl::new);
+		pool.init(20);
+		Pool<Cart> poolStub = (Pool<Cart>) UnicastRemoteObject.exportObject(pool, 0);
+		reg.rebind("pool", poolStub);
 	}
 }
