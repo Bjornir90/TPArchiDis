@@ -19,8 +19,6 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 
 	public PoolImpl(Supplier<T> supplier) {
 		this.supplier = supplier;
-		pool = new ArrayList<>();
-		availableObjects = new ArrayList<>();
 		initialCapacity = 0;
 	}
 
@@ -80,6 +78,8 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	public void init(int capacity){
 		if (capacity > MAX_SIZE) throw new ArrayIndexOutOfBoundsException();
 		else {
+			pool = new ArrayList<>(capacity);
+			availableObjects = new ArrayList<>(capacity);
 			clearLists();
 			for (int i = 0; i < capacity; i++) {
 				addToLists(supplier.get());

@@ -3,13 +3,13 @@ package com.pear.server;
 import com.pear.common.Article;
 import com.pear.common.Cart;
 
-import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class CartImpl implements Cart, Serializable {
+public class CartImpl implements Cart, Remote {
 
 	ArrayList<Article> articles;
 	HashMap<String, Integer> quantities;
