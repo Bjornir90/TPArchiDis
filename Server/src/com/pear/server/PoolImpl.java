@@ -14,6 +14,8 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	private Supplier<T> supplier;
 	private ArrayList<T> pool, availableObjects;
 
+	private static int MAX_SIZE = 2048;
+
 	public PoolImpl(Supplier<T> supplier) {
 		this.supplier = supplier;
 		pool = new ArrayList<>();
@@ -32,7 +34,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 			}
 			availableObjects.remove(availableObjects.indexOf(object));
 			return stub;
-		} else {
+		} else if(pool.size()+availableObjects.size() < MAX_SIZE){
 			T object = supplier.get();
 			T stub = null;
 			try {
@@ -42,7 +44,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 			}
 			pool.add(object);
 			return stub;
-		}
+		} else throw new ArrayIndexOutOfBoundsException();
 	}
 
 	@Override
@@ -66,9 +68,12 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 
 	@Override
 	public void init(int capacity){
-		clearLists();
-		for(int i = 0; i < capacity; i++){
-			addToLists(supplier.get());
+		if (capacity > MAX_SIZE) throw new ArrayIndexOutOfBoundsException();
+		else {
+			clearLists();
+			for (int i = 0; i < capacity; i++) {
+				addToLists(supplier.get());
+			}
 		}
 	}
 

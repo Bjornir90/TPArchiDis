@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface Pool<T extends Poolable> extends Remote {
 
-	T getInstance() throws RemoteException;
+	T getInstance() throws RemoteException, ArrayIndexOutOfBoundsException;
 	void release(T toRelease) throws RuntimeException, RemoteException;
 	void init(int capacity) throws RemoteException;
 
