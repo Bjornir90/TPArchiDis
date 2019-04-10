@@ -5,9 +5,12 @@ import com.pear.common.Pool;
 import com.pear.common.Poolable;
 import com.pear.common.Subscriber;
 
+import java.rmi.NoSuchObjectException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -16,6 +19,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	//pool contains all instances, availableObjects only contains instances not yet sent to a client
 	private ArrayList<T> pool, availableObjects;
 	private ArrayList<Subscriber> subscribers;
+	private HashMap<T, Remote> stubs;
 	private int initialCapacity;
 
 	private static int MAX_SIZE = 2048;
@@ -30,27 +34,22 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	public T getInstance(){
 		if(availableObjects.size() > 0){
 			T object = availableObjects.get(0);
-			T stub = null;
-			try {
-				stub = (T) UnicastRemoteObject.exportObject(object, 0);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
 			availableObjects.remove(availableObjects.indexOf(object));
 			if(availableObjects.size() < 20){
 				notifyAllSubscribers(new Notification("Attention : moins de 20 paniers disponibles"));
 			}
-			return stub;
+			return (T) stubs.get(object);
 		} else if(pool.size() < MAX_SIZE){
 			T object = supplier.get();
-			T stub = null;
+			pool.add(object);
+			Remote stub = null;
 			try {
-				stub = (T) UnicastRemoteObject.exportObject(object, 0);
+				stub = UnicastRemoteObject.exportObject(object, 0);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			pool.add(object);
-			return stub;
+			stubs.put(object, stub);
+			return (T) stub;
 		} else throw new ArrayIndexOutOfBoundsException();
 	}
 
@@ -71,9 +70,16 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+
 		if (availableObjects.size() > initialCapacity){
 			for(int i=0; i<availableObjects.size()-initialCapacity; i++){
 				pool.remove(availableObjects.get(i));
+				try {
+					UnicastRemoteObject.unexportObject(stubs.get(availableObjects.get(i)), false);
+					stubs.remove(availableObjects.get(i));
+				} catch (NoSuchObjectException e) {
+					e.printStackTrace();
+				}
 				availableObjects.remove(i);
 				pool.trimToSize();
 				availableObjects.trimToSize();
@@ -87,6 +93,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 		else {
 			pool = new ArrayList<>(capacity);
 			availableObjects = new ArrayList<>(capacity);
+			stubs = new HashMap<>(capacity);
 			clearLists();
 			for (int i = 0; i < capacity; i++) {
 				addToLists(supplier.get());
@@ -113,11 +120,19 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	private void clearLists(){
 		pool.clear();
 		availableObjects.clear();
+		stubs.clear();
 	}
 
 	private void addToLists(T toAdd){
 		pool.add(toAdd);
 		availableObjects.add(toAdd);
+		Remote stub = null;
+		try {
+			stub = UnicastRemoteObject.exportObject(toAdd, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		stubs.put(toAdd, stub);
 	}
 
 	private boolean contains(UUID id) throws RemoteException {
