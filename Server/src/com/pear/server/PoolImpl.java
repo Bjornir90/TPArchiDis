@@ -34,7 +34,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 			}
 			availableObjects.remove(availableObjects.indexOf(object));
 			return stub;
-		} else if(pool.size()+availableObjects.size() < MAX_SIZE){
+		} else if(pool.size() < MAX_SIZE){
 			T object = supplier.get();
 			T stub = null;
 			try {
