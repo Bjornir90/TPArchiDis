@@ -16,12 +16,14 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	//pool contains all instances, availableObjects only contains instances not yet sent to a client
 	private ArrayList<T> pool, availableObjects;
 	private ArrayList<Subscriber> subscribers;
+	private int initialCapacity;
 
 	private static int MAX_SIZE = 2048;
 
 	public PoolImpl(Supplier<T> supplier) {
 		this.supplier = supplier;
 		subscribers = new ArrayList<>();
+		initialCapacity = 0;
 	}
 
 	@Override
@@ -69,6 +71,14 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		if (availableObjects.size() > initialCapacity){
+			for(int i=0; i<availableObjects.size()-initialCapacity; i++){
+				pool.remove(availableObjects.get(i));
+				availableObjects.remove(i);
+				pool.trimToSize();
+				availableObjects.trimToSize();
+			}
+		}
 	}
 
 	@Override
@@ -82,6 +92,7 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 				addToLists(supplier.get());
 			}
 		}
+		initialCapacity = capacity;
 	}
 
 	@Override
