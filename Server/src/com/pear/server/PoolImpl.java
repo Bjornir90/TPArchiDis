@@ -1,11 +1,13 @@
 package com.pear.server;
 
+import com.pear.common.Cart;
 import com.pear.common.Pool;
 import com.pear.common.Poolable;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PoolImpl<T extends Poolable> implements Pool<T> {
@@ -45,15 +47,20 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 
 	@Override
 	public void release(T toRelease) throws RuntimeException{
-		if(pool.contains(toRelease)){
-			try {
-				toRelease.reset();
-			} catch (RemoteException e){
-				e.printStackTrace();
+		try {
+			if(contains(toRelease.getUuid())){
+				try {
+					toRelease.reset();
+				} catch (RemoteException e){
+					e.printStackTrace();
+				}
+				availableObjects.add(toRelease);
+				System.out.println("Removed object : "+toRelease.getUuid());
+			} else {
+				throw new RuntimeException("Released object is not in pool");
 			}
-			availableObjects.add(toRelease);
-		} else {
-			throw new RuntimeException("Released object is not in pool");
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -73,5 +80,14 @@ public class PoolImpl<T extends Poolable> implements Pool<T> {
 	private void addToLists(T toAdd){
 		pool.add(toAdd);
 		availableObjects.add(toAdd);
+	}
+
+	private boolean contains(UUID id) throws RemoteException {
+		for(T object : pool){
+			if(object.getUuid().equals(id)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

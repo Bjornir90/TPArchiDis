@@ -26,12 +26,13 @@ public class Client {
 
         System.out.println("Description de l'article : " + article.getDesc());
         Pool<Cart> pool = (Pool<Cart>) registry.lookup("pool");
-        Cart cart = (Cart) pool.getInstance();
+        Cart cart = pool.getInstance();
         System.out.println("Cart UUID : " + cart.getUuid());
         cart.addArticle(article, 2);
         System.out.println("TotalPrice : "+ cart.getTotalPrice());
         cart.changeQuantity(article_key, 1);
         System.out.println("TotalPrice : " + cart.getTotalPrice());
+        pool.release(cart);
     }
 
 }

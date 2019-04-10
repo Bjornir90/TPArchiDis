@@ -13,10 +13,10 @@ public class CartImpl implements Cart, Serializable {
 
 	ArrayList<Article> articles;
 	HashMap<String, Integer> quantities;
-	String uuid;
+	UUID uuid;
 
 	public CartImpl(){
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID();
 		articles = new ArrayList<>();
 		quantities = new HashMap<>();
 	}
@@ -48,7 +48,7 @@ public class CartImpl implements Cart, Serializable {
 	}
 
 	@Override
-	public String getUuid() {
+	public UUID getUuid() {
 		return uuid;
 	}
 
