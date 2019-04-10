@@ -27,6 +27,12 @@ public interface Pool<T extends Poolable> extends Remote {
 	 */
 	void init(int capacity) throws RemoteException;
 
+
+	/**
+	 * Add the Subscriber subscriber to the list of subscribers to notify
+	 * @param subscriber
+	 * @throws RemoteException
+	 */
 	void subscribe(Subscriber subscriber) throws RemoteException;
 	void unsubscribe(Subscriber subscriber) throws RemoteException;
 }
